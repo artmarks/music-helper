@@ -19,33 +19,31 @@ const Home: NextPage = (props) => {
 
       <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
         <div className="text-6xl font-bold flex">
-          <div>Music Helper</div><div className='ml-3'><FaGuitar/></div> 
+          <div>Load Tab</div> 
         </div>
+        <p className='mt-7 text-2xl text-red-700'>Coming soon...</p>
 
         <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
           <a
-            href="https://nextjs.org/docs"
+            href="tab-creation/new"
             className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
           >
-            <h3 className="text-2xl font-bold">Chord & Lyrics  Creator &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Create and export your music lyrics with chords
-            </p>
+            <h3 className="text-2xl font-bold">Create new lyrics</h3>
+          
           </a>
 
           <a
-            href="https://nextjs.org/learn"
+            href="tab-creation/load"
             className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
           >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Coming up: Learn and find guitar chords 
-            </p>
+            <h3 className="text-2xl font-bold">Load lyrics</h3>
           </a>
 
           
         </div>
+
       </main>
+    
 
       <footer className="bg-gradient-to-r from-violet-500 to-fuchsia-500 flex items-center justify-center w-full h-24 border-t">
         <a
