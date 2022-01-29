@@ -1,0 +1,38 @@
+{
+    "definition": [
+        {
+            "id": 0,
+            "name": "string",
+            "duoLine": {
+                "chordline": [
+                    {
+                        "type": "chord | tab",
+                        "chord": "C",
+                        "position": 10.25,
+                        "fontsize": 12
+                    }
+                ],
+                "textline": "Hey",
+                "fontsize": 12
+            }
+        }
+    ],
+    "structure": [
+        {
+            "id": 0,
+            "options": []
+        }
+    ],
+    "metaInformation": {
+        "name": "string",
+        "bpm": 0,
+        "descprition": ""
+    },
+    "dataInformation": {
+        "id": 0,
+        "lastChanged": "01.01.1970",
+        "userId": 0
+    }
+
+        
+}
