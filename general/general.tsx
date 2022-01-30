@@ -46,15 +46,7 @@ function buttonStyleSwitch(style: String | undefined){
 }
 
 function calculateLeftValue(position: number) {
-    // let text = position >=50 ? 'left' : '-left'
-    // let text = 'left'
-    // let intValue =  Math.floor(Math.abs(position - 50));
-    let intValue =  Math.floor(position - 50);
-    // text = text + '-[' + intValue + '%]'
-    // text += text + intValue
-    // console.log('text', text)
-    // return text
-    return intValue
+    return Math.floor(position)
 }
 
 export function ChordBubble(name: string, position:number) {
@@ -62,12 +54,14 @@ export function ChordBubble(name: string, position:number) {
         left: calculateLeftValue(position) + '%'
     }
     return (
-        <div className= {'relative flex items-center justify-center '} style={leftStyle} >
-            <div className='relative p-2 w-fit h-fit bg-green-300 rounded-lg flex justify-center items-center text-white text-xl'>
-              {name}
-              <div className='absolute w-fit h-0 border-t-[20px] border-t-green-300 border-r-[12px] border-r-transparent border-l-[12px] border-l-transparent top-[95%]'/>
+            <div className= {'absolute -mt-11 flex items-center justify-center '} style={leftStyle} >
+                <div className=''>
+                    <div className='relative p-2 bg-green-300 rounded-lg flex justify-center items-center text-white text-xl'>
+                        {name}
+                    <div className='absolute w-fit h-0 border-t-[20px] border-t-green-300 border-r-[12px] border-r-transparent border-l-[12px] border-l-transparent top-[95%]'/>
+                </div>
             </div>
-
           </div>
+        
     );
 }

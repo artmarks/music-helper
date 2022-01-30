@@ -14,7 +14,7 @@ export enum ChordType {
 
 export type chordLine = {
     type: ChordType,
-    chord: ChordSymbol,
+    chord: string,
     position: number,
     fontsize: number
 }
