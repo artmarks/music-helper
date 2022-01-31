@@ -1,11 +1,10 @@
 import type { NextPage } from 'next'
 // import Image from 'next/image'
 // import styles from '../styles/Home.module.css'
-import {ChordBubble, Footer,Header, StandardButton} from '../../general/general'
-import {FaGuitar, FaPlusCircle} from 'react-icons/fa'
-import {MdOutlineMenu} from 'react-icons/md'
+import {Footer,Header, StandardButton} from '../../general/general'
+import { FaPlusCircle} from 'react-icons/fa'
 import { ChangeEvent, MouseEvent } from 'react';
-import { ChordType, duoLine } from '../../general/generalData';
+import { ChordType, duoLine, noteElement } from '../../general/generalData';
 import React from 'react';
 // https://stackoverflow.com/questions/51785616/import-error-when-using-react-icons
 
@@ -31,42 +30,28 @@ class DuoLineView extends React.Component<IProps, IState> {
   counter: number = 1
 
   clickAddDuoLine = (e: MouseEvent) => {
-    e.preventDefault;
+    e.preventDefault
     this.addDuoLine()
   }
   
   addDuoLine(){
-    const test: duoLine = {
-      name: 'Line ' + this.counter,
-      musicElement : [
+    const musicElementArray: Array<noteElement> = [];
+    [1,2,3,4].map(() => {
+      musicElementArray.push(
         {
           position : 0,
-          chord: "Em7",
+          chord: "",
           fontsize: 12,
           type: ChordType.chord,
-          bar: 0,
-          beat: this.counter,
-          text: 'hey'
-        },
-        {
-          position : 50,
-          chord: "G",
-          fontsize: 12,
-          type: ChordType.chord,
-          bar: 0,
-          beat: this.counter + 1,
-          text: 'Baby'
-        },
-        {
-          position : 75,
-          chord: "F# dim",
-          fontsize: 12,
-          type: ChordType.chord,
-          bar: 0,
-          beat: this.counter +2,
-          text: 'Girl'
-        },
-      ],
+          bar: this.counter,
+          text: ''
+        }
+      )
+    })
+
+    const test: duoLine = {
+      name: 'Line ' + this.counter,
+      musicElement : musicElementArray,
       fontSize: 12,
       
     }
@@ -85,24 +70,27 @@ class DuoLineView extends React.Component<IProps, IState> {
     );
   }
 
-  lineNameOnchange(event: ChangeEvent, index: any){
+
+  lineNameOnchange(event: ChangeEvent, index: number){
     const target = event.target as HTMLInputElement
-    const indexSearch = this.duoLineArray?.at(index)
-    if(indexSearch){
-      indexSearch.name = target.value
+    const indexSearch = this.duoLineArray.at(index)
+    if(!indexSearch){
+        return
     }
-    this.setState({
-      duoLineArray: this.duoLineArray
-    }); 
+    indexSearch!.name = target.value
+    this.triggerDuoLineChange()
   }
 
-  textLineOnchange(event: ChangeEvent, index: any){
-    // const target = event.target as HTMLInputElement
-    // const indexSearch = this.duoLineArray?.at(index)
-    // if(indexSearch){
-    //   indexSearch.textLine = target.value
-    // }
-    // this.triggerDuoLineChange()
+  textLineOnchange(event: ChangeEvent, beat: number, index: number){
+    const target = event.target as HTMLInputElement
+    const indexSearch = this.duoLineArray.at(index)
+    if(!indexSearch){
+        return
+    }
+    const musicElement = indexSearch.musicElement.at(beat-1)
+    musicElement!.text = target.value
+
+    this.triggerDuoLineChange()
   }
 
   addChordToLine(e: MouseEvent, index: any){
@@ -129,6 +117,27 @@ class DuoLineView extends React.Component<IProps, IState> {
     e.preventDefault();
   }
  
+  chordValueChange(event: ChangeEvent<HTMLInputElement>, beat: number, index: number){
+    let width = 6 + event.target.value.length * 11
+    if(width > 77){
+      width = 77
+    }else if (width < 24){
+      width = 24
+    } 
+    event.target.style.width = width + "px"
+
+    const target = event.target as HTMLInputElement
+    const indexSearch = this.duoLineArray.at(index)
+    if(!indexSearch){
+        return
+    }
+    const musicElement = indexSearch.musicElement.at(beat-1)
+    musicElement!.chord = target.value
+
+    this.triggerDuoLineChange()
+    
+  }
+
   showDuoLine(line: duoLine, index: any){
     return (
       <div className='flex flex-col border-2 w-[512px] mt-4' onDragOver={(e)=> this.allowDrop(e)} onDragEnd={(e) => {console.log('drag',e)}} >
@@ -143,18 +152,18 @@ class DuoLineView extends React.Component<IProps, IState> {
         <div className='flex flex-col m-2 space-y-2 '  >
           <div className='relative flex flex-wrap'  >
             {/* TODO dynamic solution */}
-           {[1,2,3,4].map((value, index )=> {
+           {[1,2,3,4].map((beat )=> {
             return ( 
           <><div className='flex flex-col'>
-              <div className={'absolute -mt-11 flex items-center justify-center '}>
+              <div className={'absolute -mt-[52px] flex items-center justify-center '}>
                 <div className=''>
                   <div draggable className='relative p-2 bg-green-300 rounded-lg flex justify-center items-center text-white text-xl'>
-                    <input className='bg-green-300 text-white w-6' placeholder='C'/>
+                    <input className='bg-green-300 text-white w-6' placeholder='' onChange={(e)=> this.chordValueChange(e, beat, index)}/>
                     <div className='absolute w-fit h-0 border-t-[20px] border-t-green-300 border-r-[12px] border-r-transparent border-l-[12px] border-l-transparent top-[95%]' />
                   </div>
                 </div>
               </div>
-            </div><input className='w-24 px-1 mx-2 mb-4 rounded-lg border-2 border-transparent hover:border-2 hover:box-content hover:border-green-200 ,' type="text" placeholder="" onChange={(e) => this.textLineOnchange(e, index)} /></>
+            </div><input className='w-24 px-1 mx-2 mb-4 rounded-lg border-2 border-transparent hover:border-2 hover:border-green-200 ,' type="text" placeholder="" onChange={(e) => this.textLineOnchange(e, beat, index)} /></>
            )})}     
           </div>
         </div>
@@ -184,6 +193,19 @@ class DuoLineView extends React.Component<IProps, IState> {
     
   }
 
+  exportState(){
+    let element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.duoLineArray)));
+    element.setAttribute('download', 'song.json');
+  
+    element.style.display = 'none';
+    document.body.appendChild(element);
+  
+    element.click();
+  
+    document.body.removeChild(element);
+  }
+
   render() {
     return (
       <div className="bg-gradient-to-r from-gray-200 to-gray-400  flex flex-col items-center justify-center min-h-screen py-2">
@@ -207,9 +229,9 @@ class DuoLineView extends React.Component<IProps, IState> {
         </div>
   
         <div className='flex justify-center mt-6'>
-          <div className='flex flex-col space-y-2  mt-9 w-fit'>
+          <div className='flex flex-col space-y-2 mb-2 mt-8 w-fit'>
           <StandardButton style={'add'} click={ (e: MouseEvent<Element, globalThis.MouseEvent>) => this.clickAddDuoLine(e) } />
-          <StandardButton name={'Export'} click={ () => {}} />
+          <StandardButton name={'Export'} click={ () => {this.exportState()}} />
           </div>
         </div>
       

@@ -17,7 +17,6 @@ export type noteElement = {
     chord?: string,
     text: string,
     position: number,
-    beat: number
     bar: number
     fontsize: number
 }
