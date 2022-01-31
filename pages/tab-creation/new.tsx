@@ -116,10 +116,13 @@ class DuoLineView extends React.Component<IProps, IState> {
     }); 
   }
 
+  allowDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+  }
  
   showDuoLine(line: duoLine, index: any){
     return (
-      <div className='flex flex-col border-2 min-w-full'>
+      <div className='flex flex-col border-2 min-w-full' onDragOver={(e)=> this.allowDrop(e)} onDragEnd={(e) => {console.log('drag',e)}} >
 
         <div className='flex flex-row'>
           <input className='w-fit mb-12 mt-1 mx-2 px-1' type="text" placeholder={ line.name } onChange={(e) => this.lineNameOnchange(e,index)}/>
@@ -128,8 +131,8 @@ class DuoLineView extends React.Component<IProps, IState> {
         </div>
 
         
-        <div className='flex flex-col m-2 space-y-2 '>
-          <div className='relative flex flex-row'>
+        <div className='flex flex-col m-2 space-y-2 '  >
+          <div className='relative flex flex-row'  >
             {line.chordLine.map((value) => {
               return ChordBubble(value.chord,value.position)
             })}        

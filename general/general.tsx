@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { DragEvent } from 'react';
 import {FaGithub} from 'react-icons/fa'
 import {VscAdd} from 'react-icons/vsc'
 import { buttonData, duoLine } from './generalData';
@@ -49,12 +50,17 @@ function calculateLeftValue(position: number) {
     return Math.floor(position)
 }
 
+function allowDrop(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+}
+
 export function ChordBubble(name: string, position:number) {
     const leftStyle ={
         left: calculateLeftValue(position) + '%'
     }
     return (
-            <div className= {'absolute -mt-11 flex items-center justify-center '} style={leftStyle} >
+        <div onDragOver={(e)=> allowDrop(e)} onDragEnd={(e) => {console.log('drag',e)}}>
+            <div draggable className= {'absolute -mt-11 flex items-center justify-center '} style={leftStyle} >
                 <div className=''>
                     <div className='relative p-2 bg-green-300 rounded-lg flex justify-center items-center text-white text-xl'>
                         {name}
@@ -62,6 +68,7 @@ export function ChordBubble(name: string, position:number) {
                 </div>
             </div>
           </div>
+        </div>
         
     );
 }
