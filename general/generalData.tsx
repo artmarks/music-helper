@@ -12,10 +12,13 @@ export enum ChordType {
     mix
 }
 
-export type chordElement = {
+export type noteElement = {
     type: ChordType,
-    chord: string,
+    chord?: string,
+    text: string,
     position: number,
+    beat: number
+    bar: number
     fontsize: number
 }
 
@@ -28,7 +31,6 @@ export enum ChordSymbol {
 
 export type duoLine = {
     name: string,
-    chordLine: Array<chordElement>,
-    textLine: string,
+    musicElement: Array<noteElement>,
     fontSize: number
 }

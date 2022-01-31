@@ -5,7 +5,7 @@ import {ChordBubble, Footer,Header, StandardButton} from '../../general/general'
 import {FaGuitar, FaPlusCircle} from 'react-icons/fa'
 import {MdOutlineMenu} from 'react-icons/md'
 import { ChangeEvent, MouseEvent } from 'react';
-import { chordElement, chordLine, ChordSymbol, ChordType, duoLine } from '../../general/generalData';
+import { ChordType, duoLine } from '../../general/generalData';
 import React from 'react';
 // https://stackoverflow.com/questions/51785616/import-error-when-using-react-icons
 
@@ -38,28 +38,37 @@ class DuoLineView extends React.Component<IProps, IState> {
   addDuoLine(){
     const test: duoLine = {
       name: 'Line ' + this.counter,
-      chordLine : [
+      musicElement : [
         {
           position : 0,
           chord: "Em7",
           fontsize: 12,
-          type: ChordType.chord
+          type: ChordType.chord,
+          bar: 0,
+          beat: this.counter,
+          text: 'hey'
         },
         {
           position : 50,
           chord: "G",
           fontsize: 12,
-          type: ChordType.chord
+          type: ChordType.chord,
+          bar: 0,
+          beat: this.counter + 1,
+          text: 'Baby'
         },
         {
           position : 75,
           chord: "F# dim",
           fontsize: 12,
-          type: ChordType.chord
+          type: ChordType.chord,
+          bar: 0,
+          beat: this.counter +2,
+          text: 'Girl'
         },
       ],
       fontSize: 12,
-      textLine: 'Test Song'
+      
     }
     this.duoLineArray.push(test);
     this.setState({
@@ -88,26 +97,26 @@ class DuoLineView extends React.Component<IProps, IState> {
   }
 
   textLineOnchange(event: ChangeEvent, index: any){
-    const target = event.target as HTMLInputElement
-    const indexSearch = this.duoLineArray?.at(index)
-    if(indexSearch){
-      indexSearch.textLine = target.value
-    }
-    this.triggerDuoLineChange()
+    // const target = event.target as HTMLInputElement
+    // const indexSearch = this.duoLineArray?.at(index)
+    // if(indexSearch){
+    //   indexSearch.textLine = target.value
+    // }
+    // this.triggerDuoLineChange()
   }
 
   addChordToLine(e: MouseEvent, index: any){
-    const indexSearch = this.duoLineArray?.at(index)
-    if(indexSearch){
-      const chord: chordElement = {
-        chord : 'C',
-        fontsize: 12,
-        position: 25,
-        type: ChordType.chord
-      }
-      indexSearch.chordLine.push(chord) 
-      this.triggerDuoLineChange()
-    }
+    // const indexSearch = this.duoLineArray?.at(index)
+    // if(indexSearch){
+    //   const chord: chordElement = {
+    //     chord : 'C',
+    //     fontsize: 12,
+    //     position: 25,
+    //     type: ChordType.chord
+    //   }
+    //   indexSearch.chordLine.push(chord) 
+    //   this.triggerDuoLineChange()
+    // }
   }
 
   triggerDuoLineChange(){
@@ -122,7 +131,7 @@ class DuoLineView extends React.Component<IProps, IState> {
  
   showDuoLine(line: duoLine, index: any){
     return (
-      <div className='flex flex-col border-2 min-w-full' onDragOver={(e)=> this.allowDrop(e)} onDragEnd={(e) => {console.log('drag',e)}} >
+      <div className='flex flex-col border-2 w-[512px] mt-4' onDragOver={(e)=> this.allowDrop(e)} onDragEnd={(e) => {console.log('drag',e)}} >
 
         <div className='flex flex-row'>
           <input className='w-fit mb-12 mt-1 mx-2 px-1' type="text" placeholder={ line.name } onChange={(e) => this.lineNameOnchange(e,index)}/>
@@ -132,12 +141,22 @@ class DuoLineView extends React.Component<IProps, IState> {
 
         
         <div className='flex flex-col m-2 space-y-2 '  >
-          <div className='relative flex flex-row'  >
-            {line.chordLine.map((value) => {
-              return ChordBubble(value.chord,value.position)
-            })}        
+          <div className='relative flex flex-wrap'  >
+            {/* TODO dynamic solution */}
+           {[1,2,3,4].map((value, index )=> {
+            return ( 
+          <><div className='flex flex-col'>
+              <div className={'absolute -mt-11 flex items-center justify-center '}>
+                <div className=''>
+                  <div draggable className='relative p-2 bg-green-300 rounded-lg flex justify-center items-center text-white text-xl'>
+                    <input className='bg-green-300 text-white w-6' placeholder='C'/>
+                    <div className='absolute w-fit h-0 border-t-[20px] border-t-green-300 border-r-[12px] border-r-transparent border-l-[12px] border-l-transparent top-[95%]' />
+                  </div>
+                </div>
+              </div>
+            </div><input className='w-24 px-1 mx-2 mb-4 rounded-lg border-2 border-transparent hover:border-2 hover:box-content hover:border-green-200 ,' type="text" placeholder="" onChange={(e) => this.textLineOnchange(e, index)} /></>
+           )})}     
           </div>
-          <input className='px-1 mb-4 border-2 border-transparent hover:border-2 hover:box-content hover:border-green-200 ,' type="text" placeholder={ line.textLine } onChange={(e) => this.textLineOnchange(e,index)}/>
         </div>
       </div>
     );
@@ -170,14 +189,14 @@ class DuoLineView extends React.Component<IProps, IState> {
       <div className="bg-gradient-to-r from-gray-200 to-gray-400  flex flex-col items-center justify-center min-h-screen py-2">
       <Header/>
 
-      <main className=" flex flex-col w-10/12 lg:w-[1024px] flex-1 px-14 text-center">
+      <main className=" flex flex-col w-10/12 lg:w-[1280px] flex-1 px-14 text-center">
         <div className="text-3xl font-bold flex justify-center mb-4">
           <div>Create a new tab</div> 
         </div>
 
         <div>
           
-          <div className='flex-col align space-y-4'>
+          <div className='flex flex-wrap align justify-between'>
           {
             this.state.duoLineArray?.map((value,index) => {
               return this.showDuoLine(value,index)                
