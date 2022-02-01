@@ -1,15 +1,9 @@
-import type { NextPage } from 'next'
-// import Image from 'next/image'
-// import styles from '../styles/Home.module.css'
 import { Footer,Header, Headline, SongBar, SongHead, StandardButton} from '../../general/general'
-import { FaPlusCircle} from 'react-icons/fa'
-import { ChangeEvent, MouseEvent } from 'react';
-import { ChordType, duoLine, noteElement } from '../../general/generalData';
+import { MouseEvent } from 'react';
+import { bar, ChordType, duoLine, noteElement, TimeSignatureEnum } from '../../general/generalData';
 import React from 'react';
-// https://stackoverflow.com/questions/51785616/import-error-when-using-react-icons
 
-interface IProps {
-}
+interface IProps {}
 
 interface IState {
   duoLineArray?: Array<duoLine>
@@ -27,7 +21,7 @@ class DuoLineView extends React.Component<IProps, IState> {
   
   addDuoLine(){
     const musicElementArray: Array<noteElement> = [];
-    [1,2,3,4].map(() => {
+    bar.map(() => {
       musicElementArray.push(
         {
           position : 0,
@@ -40,48 +34,33 @@ class DuoLineView extends React.Component<IProps, IState> {
       )
     })
 
-    const test: duoLine = {
+    const emptyLine: duoLine = {
       name: 'Line ' + this.counter,
       musicElement : musicElementArray,
       fontSize: 12,
+      timeSignature: TimeSignatureEnum.THREE_QUARTER
       
     }
-    this.duoLineArray.push(test);
-    this.setState({
-      duoLineArray: this.duoLineArray
-    }); 
+    this.duoLineArray.push(emptyLine);
+    this.triggerDuoLineChange()
     this.counter++
   }
   
-  duoLineDefiniton(line: duoLine) {
-    return (
-      <div>
-        <p>{line.name}</p>
-      </div>
-    );
-  }
-
-
-
-
   triggerDuoLineChange(){
     this.setState({
       duoLineArray: this.duoLineArray
     }); 
   }
 
-
   constructor(props: IProps) {
     super(props)
-
     this.state = {
       duoLineArray: this.duoLineArray
     }
    
   }
 
-  componentDidMount() {
-    
+  componentDidMount() {    
     this.setState(
       {
         duoLineArray : this.duoLineArray
@@ -89,24 +68,19 @@ class DuoLineView extends React.Component<IProps, IState> {
     );
   }
 
-  componentWillUnmount() {
-    
-  }
+  componentWillUnmount() {}
 
   exportState(){
     let element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.duoLineArray)));
     element.setAttribute('download', 'song.json');
-  
     element.style.display = 'none';
-    document.body.appendChild(element);
-  
+
+    document.body.appendChild(element);  
     element.click();
-  
+
     document.body.removeChild(element);
   }
-
- 
 
   render() {
     return (
@@ -126,15 +100,11 @@ class DuoLineView extends React.Component<IProps, IState> {
           </div>
         </div>
       
-      </main>
-    
+      </main>    
       <Footer/>
     </div>
     );
   }
-
- 
 }
-
 
 export default DuoLineView

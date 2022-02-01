@@ -2,8 +2,7 @@ import Head from 'next/head';
 import {ChangeEvent} from 'react';
 import {FaGithub} from 'react-icons/fa'
 import {VscAdd} from 'react-icons/vsc'
-import {buttonData, chordArray, duoLine} from './generalData';
-
+import {bar, buttonData, CHAR_CHORD_LENGTH, chordArray, duoLine, HEADER_NAME, MAX_CHORD_LENGTH, MIN_CHORD_LENGTH, START_CHORD_LENGTH, timeSignature} from './generalData';
 
 export function Footer(){
     return (
@@ -23,7 +22,7 @@ export function Footer(){
 export function Header(){
     return ( 
         <Head>
-        <title>Music Helper :)</title>
+        <title>{HEADER_NAME}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
     );
@@ -58,20 +57,23 @@ export function Headline(props: any){
             <div>{props.text}</div> 
         </div>
     )
-
 }
 
 export function SongHead() {
     return (
         <div className='flex flex-col border-2 border-white space-y-2 rounded'>
+            
             <div className='mt-2 ml-2 flex flex-col'>
               <input className=' w-1/2 lg:w-[40%] px-2 rounded' type='text' placeholder='Song name' />
             </div>
+
             <div className='flex flex-wrap ml-2 space-x-4'>
+
               <label htmlFor='timeSignatureSelect' >Time signature</label>
               <select id='timeSignatureSelect' className='rounded'>
-                <option>3/4</option>
-                <option selected>4/4</option>
+              {timeSignature.map((value)=> {
+                  return fillOption(value)
+                })}
               </select>
 
               <label htmlFor='keySelect'>Song key</label>
@@ -80,13 +82,14 @@ export function SongHead() {
                   return fillOption(value)
                 })}
               </select>
+
             </div>
             <div className='flex flex-col mx-2'>
               <textarea className='rounded h-fit' onKeyUp={(e) => adjustTextarea(e) } placeholder='Description'></textarea>
             </div>
-            <div>
 
-            </div>
+            {/*placeholder*/}
+            <div/>
 
         </div>
     )
@@ -113,11 +116,11 @@ function lineNameOnchange(event: ChangeEvent, index: number, duoLineArray: Array
 }
 
 function chordValueChange(event: ChangeEvent<HTMLInputElement>, beat: number, index: number, duoLineArray: Array<duoLine>, callback: Function){
-    let width = 6 + event.target.value.length * 11
-    if(width > 77){
-      width = 77
-    }else if (width < 24){
-      width = 24
+    let width = START_CHORD_LENGTH + event.target.value.length * CHAR_CHORD_LENGTH
+    if(width > MAX_CHORD_LENGTH){
+      width = MAX_CHORD_LENGTH
+    }else if (width < MIN_CHORD_LENGTH){
+      width = MIN_CHORD_LENGTH
     } 
     event.target.style.width = width + "px"
 
@@ -142,7 +145,6 @@ function textLineOnchange(event: ChangeEvent, beat: number, index: number, duoLi
     const musicElement = indexSearch.musicElement.at(beat-1)
     musicElement!.text = target.value
 
-    // this.triggerDuoLineChange()
     callback()
 }
 
@@ -154,26 +156,23 @@ function showDuoLine(line: duoLine, index: any, duoLineArray: Array<duoLine>, ca
 
         <div className='flex flex-row'>
           <input className='w-fit mb-12 mt-1 mx-2 px-1' type="text" placeholder={ line.name } onChange={(e) => lineNameOnchange(e, index, duoLineArray, callback)}/>
-          
         </div>
 
-        
         <div className='flex flex-col m-2 space-y-2 '  >
           <div className='relative flex flex-wrap'  >
-            {/* TODO dynamic solution */}
-           {[1,2,3,4].map((beat )=> {
+           {bar.map((beat )=> {
             return ( 
-          <><div className='flex flex-col'>
-              <div className={'absolute -mt-[52px] flex items-center justify-center '}>
-                <div className=''>
-                  <div draggable className='relative p-2 bg-green-300 rounded-lg flex justify-center items-center text-white text-xl'>
-                    <input className='bg-green-300 text-white w-6' placeholder='' onChange={(e)=> chordValueChange(e, beat, index, duoLineArray, callback)}/>
-                    <div className='absolute w-fit h-0 border-t-[20px] border-t-green-300 border-r-[12px] border-r-transparent border-l-[12px] border-l-transparent top-[95%]' />
-                  </div>
-                </div>
-              </div>
-            </div><input className='w-24 px-1 mx-2 mb-4 rounded-lg border-2 border-transparent hover:border-2 hover:border-green-200 ,' type="text" placeholder="" onChange={(e) => textLineOnchange(e, beat, index, duoLineArray, callback)} /></>
-           )})}     
+                <><div className='flex flex-col'>
+                    <div className={'absolute -mt-[52px] flex items-center justify-center '}>
+                        <div className=''>
+                        <div draggable className='relative p-2 bg-green-300 rounded-lg flex justify-center items-center text-white text-xl'>
+                            <input className='bg-green-300 text-white w-6' placeholder='' onChange={(e)=> chordValueChange(e, beat, index, duoLineArray, callback)}/>
+                            <div className='absolute w-fit h-0 border-t-[20px] border-t-green-300 border-r-[12px] border-r-transparent border-l-[12px] border-l-transparent top-[95%]' />
+                        </div>
+                        </div>
+                    </div>
+                    </div><input className='w-24 px-1 mx-2 mb-4 rounded-lg border-2 border-transparent hover:border-2 hover:border-green-200 ,' type="text" placeholder="" onChange={(e) => textLineOnchange(e, beat, index, duoLineArray, callback)} /></>
+                )})}     
           </div>
         </div>
       </div>
@@ -184,11 +183,11 @@ export function SongBar(params: any) {
     return (
         <div>
           <div className='flex flex-wrap align justify-between'>
-          {
-            params.duoLineArray?.map((value: duoLine, index: any) => {
-              return showDuoLine(value, index, params.duoLineArray, params.callback)                
-            })
-          }
+            {
+                params.duoLineArray?.map((value: duoLine, index: any) => {
+                return showDuoLine(value, index, params.duoLineArray, params.callback)                
+                })
+            }
           </div>
         </div>
     )
