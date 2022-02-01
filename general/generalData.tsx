@@ -21,6 +21,11 @@ export type noteElement = {
     fontsize: number
 }
 
+export const chordArray: Array<string> = [
+    'C', 'C#', 'D', 'D#', 'E', 'F',
+    'G', 'G#', 'A', 'A#', 'B'
+]
+
 export enum ChordSymbol {
     C,
     C_SHARP,
