@@ -10,6 +10,7 @@ export type buttonData = {
     style?: string,
     symbol?: string,
     click: any,
+    cy?: string
 };
 
 export enum ChordType {

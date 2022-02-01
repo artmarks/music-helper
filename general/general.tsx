@@ -30,7 +30,7 @@ export function Header(){
 
 export function StandardButton(props: buttonData){
     return (
-        <button onClick={props.click} className='bg-green-300 hover:bg-green-500 text-white font-bold py-2 px-4 border-l-4 border-white hover:border-blue-500 rounded flex justify-center'>
+        <button data-cy={props.cy} onClick={props.click} className='bg-green-300 hover:bg-green-500 text-white font-bold py-2 px-4 border-l-4 border-white hover:border-blue-500 rounded flex justify-center'>
             {props.name} {buttonStyleSwitch(props.style)}
         </button>
     );
@@ -39,7 +39,7 @@ export function StandardButton(props: buttonData){
 function buttonStyleSwitch(style: String | undefined){
     switch(style){
         case 'add':
-            return (<VscAdd color={"white"} fontSize={"1.5em"} />);
+            return (<VscAdd data-cy="addNewTabButtonSVG" color={"white"} fontSize={"1.5em"} />);
         default:
             return '';
     }
@@ -54,7 +54,7 @@ export function fillOption(value: string) {
 export function Headline(props: any){
     return (
         <div className="text-3xl font-bold flex justify-center mb-4">
-            <div>{props.text}</div> 
+            <div data-cy='headline'>{props.text}</div> 
         </div>
     )
 }
@@ -64,13 +64,13 @@ export function SongHead() {
         <div className='flex flex-col border-2 border-white space-y-2 rounded'>
             
             <div className='mt-2 ml-2 flex flex-col'>
-              <input className=' w-1/2 lg:w-[40%] px-2 rounded' type='text' placeholder='Song name' />
+              <input className=' w-1/2 lg:w-[40%] px-2 rounded' type='text' placeholder='Song name' data-cy="songNameInput"/>
             </div>
 
             <div className='flex flex-wrap ml-2 space-x-4'>
 
               <label htmlFor='timeSignatureSelect' >Time signature</label>
-              <select id='timeSignatureSelect' className='rounded'>
+              <select id='timeSignatureSelect' className='rounded' data-cy="timeSignatureSelect">
               {timeSignature.map((value)=> {
                   return fillOption(value)
                 })}
@@ -152,7 +152,7 @@ function textLineOnchange(event: ChangeEvent, beat: number, index: number, duoLi
 
 function showDuoLine(line: duoLine, index: any, duoLineArray: Array<duoLine>, callback: Function){
     return (
-      <div className='flex flex-col border-2 border-white w-[512px] mt-4 rounded' onDragOver={(e)=> allowDrop(e)} onDragEnd={(e) => {console.log('drag',e)}} >
+      <div className='flex flex-col border-2 border-white w-[512px] mt-4 rounded' onDragOver={(e)=> allowDrop(e)} onDragEnd={(e) => {console.log('drag',e)}} data-cy={"duoline" + index} >
 
         <div className='flex flex-row'>
           <input className='w-fit mb-12 mt-1 mx-2 px-1' type="text" placeholder={ line.name } onChange={(e) => lineNameOnchange(e, index, duoLineArray, callback)}/>
