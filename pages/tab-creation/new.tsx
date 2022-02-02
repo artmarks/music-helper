@@ -82,10 +82,9 @@ class DuoLineView extends React.Component < IProps, IState > {
                     <Headline text="Create a new tab"/>
                     <SongHead/>
 
-                    <SongBar duoLineArray={
-                            this.state.duoLineArray
-                        }
-                        callback={ () => this.triggerDuoLineChange() }/>
+                    <SongBar duoLineArray={ this.state.duoLineArray}
+                        callback={ () => this.triggerDuoLineChange() }
+                    />
 
                     <div className='flex justify-center mt-6'>
                         <div className='flex flex-col space-y-2 mb-2 mt-8 w-fit'>
