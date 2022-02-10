@@ -1,17 +1,33 @@
 import {Footer, Header, Headline, SongBar, SongHead, StandardButton} from '../../general/general'
 import {MouseEvent} from 'react';
-import { bar, ChordType, duoLine, noteElement, TimeSignatureEnum} from '../../general/generalData';
+import { FOUR_QUARTER_BAR, ChordType, duoLine, noteElement, TimeSignatureEnum, TIME_SIGNATURE, TIME_MAP, musicSheet, ChordSymbol, TWO_QUARTER_BAR, THREE_QUARTER_BAR, TIME_ARRAY_MAP} from '../../general/generalData';
 import React from 'react';
 
 interface IProps {}
 
 interface IState {
-    duoLineArray?: Array < duoLine >
+    duoLines?: Array<duoLine>,
+    timeSignature?: TimeSignatureEnum
 }
 
 class DuoLineView extends React.Component < IProps, IState > {
 
-    duoLineArray : Array < duoLine > = [];
+    constructor(props : IProps) {
+        super(props)
+        this.state = {
+            duoLines: this.musicSheet.duoLines,
+            timeSignature: TimeSignatureEnum.FOUR_QUARTER
+        }
+
+    }
+
+    musicSheet: musicSheet = {
+        descprition:'',
+        duoLines: [],
+        name: '',
+        songKey: ChordSymbol.C,
+        timeSignature: TimeSignatureEnum.FOUR_QUARTER
+    }
     counter : number = 1;
 
     clickAddDuoLine = (e : MouseEvent) => {
@@ -20,50 +36,63 @@ class DuoLineView extends React.Component < IProps, IState > {
     }
 
     addDuoLine() {
-        const musicElementArray: Array < noteElement > = [];
-        bar.map(() => {
-            musicElementArray.push({
-                position: 0,
-                chord: "",
-                fontsize: 12,
-                type: ChordType.chord,
-                bar: this.counter,
-                text: ''
-            })
+        
+        let array = []
+        switch(this.musicSheet.timeSignature){
+            case TimeSignatureEnum.FOUR_QUARTER:
+                array = FOUR_QUARTER_BAR
+                break;
+            case TimeSignatureEnum.THREE_QUARTER:
+                array = THREE_QUARTER_BAR
+                break;
+            case TimeSignatureEnum.TWO_QUARTERS:
+            array = TWO_QUARTER_BAR
+            break;
+        }
+        const noteElementArray: Array<noteElement>  = []
+        array.forEach((value)=>{
+            const notelement: noteElement = {
+                bar: value,
+                fontsize:12,
+                position:0,
+                text:'',
+                type:ChordType.chord,
+                chord: ''
+            }
+            noteElementArray.push(notelement)
         })
 
-        const emptyLine: duoLine = {
-            name: 'Line ' + this.counter,
-            musicElement: musicElementArray,
+        const duoLine: duoLine = {
             fontSize: 12,
-            timeSignature: TimeSignatureEnum.THREE_QUARTER
+            musicElements: noteElementArray,
+            name: 'Line ' + this.counter
         }
-        this.duoLineArray.push(emptyLine);
+
+        this.musicSheet.duoLines.push(duoLine)
         this.triggerDuoLineChange()
         this.counter ++
+
     }
 
     triggerDuoLineChange() {
-        this.setState({duoLineArray: this.duoLineArray});
-    }
-
-    constructor(props : IProps) {
-        super(props)
-        this.state = {
-            duoLineArray: this.duoLineArray
-        }
-
+        this.setState({
+            duoLines: this.musicSheet.duoLines,
+            timeSignature: this.musicSheet.timeSignature
+        });
     }
 
     componentDidMount() {
-        this.setState({duoLineArray: this.duoLineArray});
+        this.setState({
+            duoLines: this.musicSheet.duoLines,
+            timeSignature: this.musicSheet.timeSignature
+        });
     }
 
     componentWillUnmount() {}
 
     exportState() {
         let element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.duoLineArray)));
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.musicSheet)));
         element.setAttribute('download', 'song.json');
         element.style.display = 'none';
 
@@ -73,6 +102,24 @@ class DuoLineView extends React.Component < IProps, IState > {
         document.body.removeChild(element);
     }
 
+    changeTimeSignature(e: React.FormEvent<HTMLSelectElement>){
+        console.log(e)
+        
+        if(TIME_SIGNATURE.includes(e.currentTarget.value) ){
+            //TODO trigger change Event
+            this.musicSheet.timeSignature = TIME_MAP.get(e.currentTarget.value) as TimeSignatureEnum
+            this.setState({timeSignature: this.getTimeSignature()});
+        }
+    }
+
+    getTimeSignature(): TimeSignatureEnum{
+        if(this.state.timeSignature !== undefined){
+            return this.state.timeSignature 
+        }else{
+            return TimeSignatureEnum.FOUR_QUARTER
+        }
+    }
+
     render() {
         return (
             <div className="bg-gradient-to-r from-gray-200 to-gray-400  flex flex-col items-center justify-center min-h-screen py-2">
@@ -80,9 +127,9 @@ class DuoLineView extends React.Component < IProps, IState > {
 
                 <main className=" flex flex-col w-10/12 lg:w-[1280px] flex-1 px-14 text-center">
                     <Headline text="Create a new tab"/>
-                    <SongHead/>
+                    <SongHead keyCallback={console.log} timeCallback={(e: any) => this.changeTimeSignature(e)}  />
 
-                    <SongBar duoLineArray={ this.state.duoLineArray}
+                    <SongBar duoLineArray={ this.state.duoLines} bar={TIME_ARRAY_MAP.get(this.getTimeSignature())}
                         callback={ () => this.triggerDuoLineChange() }
                     />
 
