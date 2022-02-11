@@ -67,23 +67,25 @@ export function SongHead(props: any) {
               <input className=' w-1/2 lg:w-[40%] px-2 rounded' type='text' placeholder='Song name' data-cy="songNameInput"/>
             </div>
 
-            <div className='flex flex-wrap ml-2 space-x-4'>
+            <div className='flex flex-wrap ml-2'>
 
-              <label htmlFor='timeSignatureSelect' >Time signature</label>
-              <select id='timeSignatureSelect' className='rounded' data-cy="timeSignatureSelect" onChange={(e) =>props.timeCallback(e)}>
-              {TIME_SIGNATURE.map((value, index)=> {
-                  return fillOption(value, index)
+                <label className='mr-2 mt-1' htmlFor='timeSignatureSelect' >Time signature</label>
+                <select id='timeSignatureSelect' className='rounded mr-4' data-cy="timeSignatureSelect" onChange={(e) =>props.timeCallback(e)}>
+                {TIME_SIGNATURE.map((value, index)=> {
+                    return fillOption(value, index)
                 })}
-              </select>
+                </select>
 
-              <label htmlFor='keySelect'>Song key</label>
-              <select id='keySelect' className='rounded' onChange={(e) =>props.keyCallback(e)} >
+                <label className='mr-2 mt-1' htmlFor='keySelect'>Song key</label>
+                <select id='keySelect' className='rounded mr-4' onChange={(e) =>props.keyCallback(e)} >
                 {chordArray.map((value, index)=> {
-                  return fillOption(value, index)
+                    return fillOption(value, index)
                 })}
-              </select>
+                </select>
 
-              <StandardButton name='Transpose' click={ (e : MouseEvent) => console.log(e) }/>
+                <div className='mr-2'>
+                    <StandardButton name='Transpose' click={ (e : MouseEvent) => console.log(e) }/>
+                </div> 
 
             </div>
             <div className='flex flex-col mx-2'>
@@ -154,28 +156,27 @@ function textLineOnchange(event: ChangeEvent, beat: number, index: number, duoLi
 
 function showDuoLine(line: duoLine, index: number, duoLine: Array<duoLine>, callback: Function, bar: Array<number>){
     return (
-      <div key={'showDuoLine' + index} className='flex flex-col border-2 border-white w-[512px] mt-4 rounded' onDragOver={(e)=> allowDrop(e)} onDragEnd={(e) => {console.log('drag',e)}} data-cy={"duoline" + index} >
+      <div key={'showDuoLine' + index} className='flex flex-col border-2 border-white mt-4 rounded sm:w-full md:w-[49%] lg:w-[49%]' data-cy={"duoline" + index} >
 
         <div className='flex flex-row'>
-          <input className='w-fit mb-12 mt-1 mx-2 px-1' type="text" placeholder={ line.name } onChange={(e) => lineNameOnchange(e, index, duoLine, callback)}/>
-            {JSON.stringify(bar)}
+          <input className='w-fit  my-1 mx-2 px-1' type="text" placeholder={ line.name } onChange={(e) => lineNameOnchange(e, index, duoLine, callback)}/>
         </div>
 
-        <div className='flex flex-col m-2 space-y-2 '  >
-          <div className='relative flex flex-wrap'  >
+        <div className='flex flex-col '  >
+          <div className=' flex flex-wrap'  >
           {bar.map((beat, beatIndex )=> {
             return (
-                <div key={"beatIndex" + beatIndex}> 
+                <div key={"beatIndex" + beatIndex} className=""> 
                     <div className='flex flex-col'>
-                        <div className={'absolute -mt-[52px] flex items-center justify-center '}>
+                        <div className='ml-1 w-fit'>
                             <div className=''>
-                                <div draggable className='relative p-2 bg-green-300 rounded-lg flex justify-center items-center text-white text-xl'>
+                                <div className='relative p-2 bg-green-300 rounded-lg flex justify-center items-center text-white text-xl mb-2'>
                                     <input className='bg-green-300 text-white w-6' placeholder='' onChange={(e) => chordValueChange(e, beat, index, duoLine, callback)} />
-                                    <div className='absolute w-fit h-0 border-t-[20px] border-t-green-300 border-r-[12px] border-r-transparent border-l-[12px] border-l-transparent top-[95%]' />
+                                    <div className='absolute h-0 border-t-[20px] border-t-green-300 border-r-[12px] border-r-transparent border-l-[12px] border-l-transparent top-[95%]' />
                                 </div>
                             </div>
                         </div>
-                    </div><input className='w-24 px-1 mx-2 mb-4 rounded-lg border-2 border-transparent hover:border-2 hover:border-green-200 ,' type="text" placeholder="" onChange={(e) => textLineOnchange(e, beat, index, duoLine, callback)} />
+                    </div><input className='px-1 mx-2 mb-4 rounded-lg border-2 border-transparent hover:border-2 hover:border-green-200 ,' type="text" placeholder="" onChange={(e) => textLineOnchange(e, beat, index, duoLine, callback)} />
                 </div> )})
             }
           </div>

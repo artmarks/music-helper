@@ -122,10 +122,11 @@ class DuoLineView extends React.Component < IProps, IState > {
 
     render() {
         return (
-            <div className="bg-gradient-to-r from-gray-200 to-gray-400  flex flex-col items-center justify-center min-h-screen py-2">
+            <div className="bg-gradient-to-r from-gray-200 to-gray-400  flex flex-col justify-center min-h-screen py-2 px-4">
                 <Header/>
 
-                <main className=" flex flex-col w-10/12 lg:w-[1280px] flex-1 px-14 text-center">
+                {/* w-10/12 lg:w-[1280px] */}
+                <main className=" flex flex-col flex-1 text-center">
                     <Headline text="Create a new tab"/>
                     <SongHead keyCallback={console.log} timeCallback={(e: any) => this.changeTimeSignature(e)}  />
 
