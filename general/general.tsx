@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import {ChangeEvent} from 'react';
+import {ChangeEvent, MouseEvent} from 'react';
 import {FaGithub} from 'react-icons/fa'
 import {VscAdd} from 'react-icons/vsc'
 import {FOUR_QUARTER_BAR, buttonData, CHAR_CHORD_LENGTH, chordArray, duoLine, HEADER_NAME, MAX_CHORD_LENGTH, MIN_CHORD_LENGTH, START_CHORD_LENGTH, TIME_SIGNATURE} from './generalData';
@@ -152,14 +152,20 @@ function textLineOnchange(event: ChangeEvent, beat: number, index: number, duoLi
     callback()
 }
 
-
+function deleteDuoLine(event: MouseEvent,  index: number, duoLineArray: Array<duoLine>, callback: Function ){
+    duoLineArray.splice(index,1)
+    callback()
+}
 
 function showDuoLine(line: duoLine, index: number, duoLine: Array<duoLine>, callback: Function, bar: Array<number>){
     return (
       <div key={'showDuoLine' + index} className='flex flex-col border-2 border-white mt-4 rounded sm:w-full md:w-[49%] lg:w-[49%]' data-cy={"duoline" + index} >
 
-        <div className='flex flex-row'>
-          <input className='w-fit  my-1 mx-2 px-1' type="text" placeholder={ line.name } onChange={(e) => lineNameOnchange(e, index, duoLine, callback)}/>
+        <div className='flex flex-row mt-1'>
+            <input className='w-fit  my-1 mx-2 px-1' type="text" placeholder={ line.name } onChange={(e) => lineNameOnchange(e, index, duoLine, callback)}/>
+            <div className='ml-2'>
+                <button onClick={(e) => deleteDuoLine(e, index, duoLine, callback)} className='bg-red-400 p-2 rounded-lg hover:bg-red-500 text-gray-800'>X</button>
+            </div>
         </div>
 
         <div className='flex flex-col '  >

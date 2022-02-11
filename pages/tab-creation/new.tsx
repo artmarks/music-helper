@@ -130,7 +130,7 @@ class DuoLineView extends React.Component < IProps, IState > {
                     <Headline text="Create a new tab"/>
                     <SongHead keyCallback={console.log} timeCallback={(e: any) => this.changeTimeSignature(e)}  />
 
-                    <SongBar duoLineArray={ this.state.duoLines} bar={TIME_ARRAY_MAP.get(this.getTimeSignature())}
+                    <SongBar duoLineArray={ this.musicSheet.duoLines} bar={TIME_ARRAY_MAP.get(this.getTimeSignature())}
                         callback={ () => this.triggerDuoLineChange() }
                     />
 
