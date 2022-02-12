@@ -2,7 +2,8 @@ import Head from 'next/head';
 import {ChangeEvent, MouseEvent} from 'react';
 import {FaGithub} from 'react-icons/fa'
 import {VscAdd} from 'react-icons/vsc'
-import {FOUR_QUARTER_BAR, buttonData, CHAR_CHORD_LENGTH, chordArray, duoLine, HEADER_NAME, MAX_CHORD_LENGTH, MIN_CHORD_LENGTH, START_CHORD_LENGTH, TIME_SIGNATURE} from './generalData';
+import {MdCancel} from 'react-icons/md'
+import {FOUR_QUARTER_BAR, buttonData, CHAR_CHORD_LENGTH, chordArray, duoLine, HEADER_NAME, MAX_CHORD_LENGTH, MIN_CHORD_LENGTH, START_CHORD_LENGTH, TIME_SIGNATURE, TimeSignatureEnum} from './generalData';
 
 export function Footer(){
     return (
@@ -61,40 +62,42 @@ export function Headline(props: any){
 
 export function SongHead(props: any) {
     return (
-        <div className='flex flex-col border-2 border-white space-y-2 rounded'>
-            
-            <div className='mt-2 ml-2 flex flex-col'>
-              <input className=' w-1/2 lg:w-[40%] px-2 rounded' type='text' placeholder='Song name' data-cy="songNameInput"/>
+        <div className='flex justify-center'>
+            <div className='flex flex-col border-2 border-white space-y-2 rounded max-w-[1024px] w-[90vw] min-w-[250px] '>
+                
+                <div className='mt-2 ml-2 flex flex-col'>
+                <input className=' w-1/2 lg:w-[40%] px-2 rounded' type='text' placeholder='Song name' data-cy="songNameInput"/>
+                </div>
+
+                <div className='flex flex-wrap ml-2'>
+
+                    <label className='mr-2 mt-1' htmlFor='timeSignatureSelect' >Time signature</label>
+                    <select id='timeSignatureSelect' className='rounded mr-4' data-cy="timeSignatureSelect" onChange={(e) =>props.timeCallback(e)}>
+                    {TIME_SIGNATURE.map((value, index)=> {
+                        return fillOption(value, index)
+                    })}
+                    </select>
+
+                    <label className='mr-2 mt-1' htmlFor='keySelect'>Song key</label>
+                    <select id='keySelect' className='rounded mr-4' onChange={(e) =>props.keyCallback(e)} >
+                    {chordArray.map((value, index)=> {
+                        return fillOption(value, index)
+                    })}
+                    </select>
+
+                    <div className='mr-2'>
+                        <StandardButton name='Transpose' click={ (e : MouseEvent) => console.log(e) }/>
+                    </div> 
+
+                </div>
+                <div className='flex flex-col mx-2'>
+                <textarea className='rounded h-fit' onKeyUp={(e) => adjustTextarea(e) } placeholder='Description'></textarea>
+                </div>
+
+                {/*placeholder*/}
+                <div/>
+
             </div>
-
-            <div className='flex flex-wrap ml-2'>
-
-                <label className='mr-2 mt-1' htmlFor='timeSignatureSelect' >Time signature</label>
-                <select id='timeSignatureSelect' className='rounded mr-4' data-cy="timeSignatureSelect" onChange={(e) =>props.timeCallback(e)}>
-                {TIME_SIGNATURE.map((value, index)=> {
-                    return fillOption(value, index)
-                })}
-                </select>
-
-                <label className='mr-2 mt-1' htmlFor='keySelect'>Song key</label>
-                <select id='keySelect' className='rounded mr-4' onChange={(e) =>props.keyCallback(e)} >
-                {chordArray.map((value, index)=> {
-                    return fillOption(value, index)
-                })}
-                </select>
-
-                <div className='mr-2'>
-                    <StandardButton name='Transpose' click={ (e : MouseEvent) => console.log(e) }/>
-                </div> 
-
-            </div>
-            <div className='flex flex-col mx-2'>
-              <textarea className='rounded h-fit' onKeyUp={(e) => adjustTextarea(e) } placeholder='Description'></textarea>
-            </div>
-
-            {/*placeholder*/}
-            <div/>
-
         </div>
     )
 }
@@ -164,25 +167,25 @@ function showDuoLine(line: duoLine, index: number, duoLine: Array<duoLine>, call
         <div className='flex flex-row mt-1'>
             <input className='w-fit  my-1 mx-2 px-1' type="text" placeholder={ line.name } onChange={(e) => lineNameOnchange(e, index, duoLine, callback)}/>
             <div className='ml-2'>
-                <button onClick={(e) => deleteDuoLine(e, index, duoLine, callback)} className='bg-red-400 p-2 rounded-lg hover:bg-red-500 text-gray-800'>X</button>
+                <button onClick={(e) => deleteDuoLine(e, index, duoLine, callback)} className='bg-red-400 rounded-lg hover:bg-red-500 text-2xl mt-1'><MdCancel/></button>
             </div>
         </div>
 
         <div className='flex flex-col '  >
           <div className=' flex flex-wrap'  >
-          {bar.map((beat, beatIndex )=> {
+          {line.musicElements.map((beat, beatIndex )=> {
             return (
                 <div key={"beatIndex" + beatIndex} className=""> 
                     <div className='flex flex-col'>
                         <div className='ml-1 w-fit'>
                             <div className=''>
                                 <div className='relative p-2 bg-green-300 rounded-lg flex justify-center items-center text-white text-xl mb-2'>
-                                    <input className='bg-green-300 text-white w-6' placeholder='' onChange={(e) => chordValueChange(e, beat, index, duoLine, callback)} />
+                                    <input className='bg-green-300 text-white w-6' placeholder='' onChange={(e) => chordValueChange(e, beat.bar, index, duoLine, callback)} />
                                     <div className='absolute h-0 border-t-[20px] border-t-green-300 border-r-[12px] border-r-transparent border-l-[12px] border-l-transparent top-[95%]' />
                                 </div>
                             </div>
                         </div>
-                    </div><input className='px-1 mx-2 mb-4 rounded-lg border-2 border-transparent hover:border-2 hover:border-green-200 ,' type="text" placeholder="" onChange={(e) => textLineOnchange(e, beat, index, duoLine, callback)} />
+                    </div><input className='px-1 mx-2 mb-4 rounded-lg border-2 border-transparent hover:border-2 hover:border-green-200 ,' type="text" placeholder="" onChange={(e) => textLineOnchange(e, beat.bar, index, duoLine, callback)} />
                 </div> )})
             }
           </div>
@@ -203,4 +206,14 @@ export function SongBar(params: any) {
           </div>
         </div>
     )
+}
+
+
+export function compareTimeSignature(t1 :TimeSignatureEnum, t2: TimeSignatureEnum): number{
+    const firstChar1 = t1.charAt(0)
+    const firstChar2 = t2.charAt(0)
+    if(firstChar1 && firstChar2){
+        return Number(firstChar2) - Number(firstChar1)
+    }
+    return 0
 }

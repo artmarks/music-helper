@@ -1,4 +1,4 @@
-import {Footer, Header, Headline, SongBar, SongHead, StandardButton} from '../../general/general'
+import {compareTimeSignature, Footer, Header, Headline, SongBar, SongHead, StandardButton} from '../../general/general'
 import {MouseEvent} from 'react';
 import { FOUR_QUARTER_BAR, ChordType, duoLine, noteElement, TimeSignatureEnum, TIME_SIGNATURE, TIME_MAP, musicSheet, ChordSymbol, TWO_QUARTER_BAR, THREE_QUARTER_BAR, TIME_ARRAY_MAP} from '../../general/generalData';
 import React from 'react';
@@ -37,18 +37,8 @@ class DuoLineView extends React.Component < IProps, IState > {
 
     addDuoLine() {
         
-        let array = []
-        switch(this.musicSheet.timeSignature){
-            case TimeSignatureEnum.FOUR_QUARTER:
-                array = FOUR_QUARTER_BAR
-                break;
-            case TimeSignatureEnum.THREE_QUARTER:
-                array = THREE_QUARTER_BAR
-                break;
-            case TimeSignatureEnum.TWO_QUARTERS:
-            array = TWO_QUARTER_BAR
-            break;
-        }
+        let array: Array<number> = TIME_ARRAY_MAP.get(this.musicSheet.timeSignature)!
+       
         const noteElementArray: Array<noteElement>  = []
         array.forEach((value)=>{
             const notelement: noteElement = {
@@ -103,12 +93,43 @@ class DuoLineView extends React.Component < IProps, IState > {
     }
 
     changeTimeSignature(e: React.FormEvent<HTMLSelectElement>){
-        console.log(e)
         
         if(TIME_SIGNATURE.includes(e.currentTarget.value) ){
             //TODO trigger change Event
-            this.musicSheet.timeSignature = TIME_MAP.get(e.currentTarget.value) as TimeSignatureEnum
-            this.setState({timeSignature: this.getTimeSignature()});
+
+            const newSignature = e.currentTarget.value as TimeSignatureEnum
+            const compare = compareTimeSignature(this.musicSheet.timeSignature, newSignature)
+            const old = this.musicSheet.timeSignature
+            if(compare > 0){
+                
+                this.musicSheet.duoLines.forEach((duoLine) => {
+                    const musicElement = duoLine.musicElements.at(duoLine.musicElements.length - 1)
+                    if(!musicElement){
+                        return
+                    }
+                    
+                    for(let i=0;i<compare;i++){
+                        const musicElementClone = {...musicElement}
+                        musicElementClone.bar ? musicElementClone.bar++ : musicElementClone.bar = 1;
+                        musicElementClone.text = ''  
+                        musicElementClone.position = 0
+                        musicElementClone.chord = ''
+
+                        duoLine.musicElements.push(musicElementClone)
+                    }
+                })
+                
+            }else if(compare < 0){
+                const absoluteCompare = compare * (-1)
+                this.musicSheet.duoLines.forEach((duoLine) => {
+                    const old = duoLine.musicElements.length - 1
+                    duoLine.musicElements.splice(compare )
+                })
+            }
+
+            this.musicSheet.timeSignature = e.currentTarget.value as TimeSignatureEnum
+
+            this.setState({timeSignature: this.getTimeSignature(), duoLines: this.musicSheet.duoLines});
         }
     }
 
