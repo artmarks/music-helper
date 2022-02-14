@@ -4,6 +4,7 @@ import {FaGithub} from 'react-icons/fa'
 import {VscAdd} from 'react-icons/vsc'
 import {MdCancel} from 'react-icons/md'
 import {FOUR_QUARTER_BAR, buttonData, CHAR_CHORD_LENGTH, chordArray, duoLine, HEADER_NAME, MAX_CHORD_LENGTH, MIN_CHORD_LENGTH, START_CHORD_LENGTH, TIME_SIGNATURE, TimeSignatureEnum} from './generalData';
+import { ShowOptionView } from './chordOption';
 
 export function Footer(){
     return (
@@ -160,7 +161,20 @@ function deleteDuoLine(event: MouseEvent,  index: number, duoLineArray: Array<du
     callback()
 }
 
-function showDuoLine(line: duoLine, index: number, duoLine: Array<duoLine>, callback: Function, bar: Array<number>){
+function showModificationOption(e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) {
+    console.log('mod', e);
+    const input = e.target as HTMLInputElement
+    const parentDiv = input.parentElement
+    // console.log('input.parentElement',input.parentElement);
+    // if(parentDiv){
+    //     parentDiv.style.height = '25vw'
+    //     parentDiv.style.width = '90vw'
+    // }
+   
+}
+
+
+function showDuoLine(line: duoLine, index: number, duoLine: Array<duoLine>, callback: Function, bar: Array<number>, callbackModal: Function){
     return (
       <div key={'showDuoLine' + index} className='flex flex-col border-2 border-white mt-4 rounded sm:w-full md:w-[49%] lg:w-[49%]' data-cy={"duoline" + index} >
 
@@ -180,7 +194,7 @@ function showDuoLine(line: duoLine, index: number, duoLine: Array<duoLine>, call
                         <div className='ml-1 w-fit'>
                             <div className=''>
                                 <div className='relative p-2 bg-green-300 rounded-lg flex justify-center items-center text-white text-xl mb-2'>
-                                    <input className='bg-green-300 text-white w-6' placeholder='' onChange={(e) => chordValueChange(e, beat.bar, index, duoLine, callback)} />
+                                    <input className='bg-green-300 text-white w-6' placeholder='' onClick={(e) => callbackModal(e)} onChange={(e) => chordValueChange(e, beat.bar, index, duoLine, callback)} />
                                     <div className='absolute h-0 border-t-[20px] border-t-green-300 border-r-[12px] border-r-transparent border-l-[12px] border-l-transparent top-[95%]' />
                                 </div>
                             </div>
@@ -194,13 +208,15 @@ function showDuoLine(line: duoLine, index: number, duoLine: Array<duoLine>, call
       );
   }
 
+
+
 export function SongBar(params: any) {
     return (
         <div>
           <div className='flex flex-wrap align justify-between'>
             {
                 params.duoLineArray.map((value: duoLine, index: number) => {
-                    return showDuoLine(value, index, params.duoLineArray, params.callback,params.bar)            
+                    return showDuoLine(value, index, params.duoLineArray, params.callback,params.bar, params.callbackModal)            
                 })
             }
           </div>

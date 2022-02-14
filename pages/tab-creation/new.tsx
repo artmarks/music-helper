@@ -2,21 +2,27 @@ import {compareTimeSignature, Footer, Header, Headline, SongBar, SongHead, Stand
 import {MouseEvent} from 'react';
 import { FOUR_QUARTER_BAR, ChordType, duoLine, noteElement, TimeSignatureEnum, TIME_SIGNATURE, TIME_MAP, musicSheet, ChordSymbol, TWO_QUARTER_BAR, THREE_QUARTER_BAR, TIME_ARRAY_MAP} from '../../general/generalData';
 import React from 'react';
+import { ShowOptionView } from '../../general/chordOption';
 
 interface IProps {}
 
 interface IState {
     duoLines?: Array<duoLine>,
-    timeSignature?: TimeSignatureEnum
+    timeSignature?: TimeSignatureEnum,
+    modalOpen?: boolean
 }
 
 class DuoLineView extends React.Component < IProps, IState > {
+
+    modalOpen: boolean = false
+
 
     constructor(props : IProps) {
         super(props)
         this.state = {
             duoLines: this.musicSheet.duoLines,
-            timeSignature: TimeSignatureEnum.FOUR_QUARTER
+            timeSignature: TimeSignatureEnum.FOUR_QUARTER,
+            modalOpen: this.modalOpen
         }
 
     }
@@ -141,10 +147,19 @@ class DuoLineView extends React.Component < IProps, IState > {
         }
     }
 
+    callbackModal(){
+        console.log(this.modalOpen);
+        this.modalOpen = !this.modalOpen
+        this.setState({modalOpen: this.modalOpen});
+
+    }
+
     render() {
         return (
             <div className="bg-gradient-to-r from-gray-200 to-gray-400  flex flex-col justify-center min-h-screen py-2 px-4">
                 <Header/>
+
+                <ShowOptionView isOpen={this.modalOpen} label={'testi'} callbackClose={()=> this.callbackModal()} />
 
                 {/* w-10/12 lg:w-[1280px] */}
                 <main className=" flex flex-col flex-1 text-center">
@@ -152,7 +167,7 @@ class DuoLineView extends React.Component < IProps, IState > {
                     <SongHead keyCallback={console.log} timeCallback={(e: any) => this.changeTimeSignature(e)}  />
 
                     <SongBar duoLineArray={ this.musicSheet.duoLines} bar={TIME_ARRAY_MAP.get(this.getTimeSignature())}
-                        callback={ () => this.triggerDuoLineChange() }
+                        callback={ () => this.triggerDuoLineChange() } callbackModal={() => this.callbackModal()}
                     />
 
                     <div className='flex justify-center mt-6'>
