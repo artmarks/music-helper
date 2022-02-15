@@ -17,6 +17,7 @@ class DuoLineView extends React.Component < IProps, IState > {
     modalOpen: boolean = false
     indexBubble: number = 0
     indexLine: number = 0
+    targetBubble: HTMLInputElement = {} as HTMLInputElement
 
     constructor(props : IProps) {
         super(props)
@@ -150,7 +151,7 @@ class DuoLineView extends React.Component < IProps, IState > {
 
         if(e){
             const target = e.target as HTMLInputElement
-            console.log('target', target)
+            this.targetBubble = target 
         }
         
         this.indexBubble = indexBubble ? indexBubble: 0;   
@@ -166,7 +167,16 @@ class DuoLineView extends React.Component < IProps, IState > {
             const musicElement = indexSearch.musicElements.at(this.indexBubble - 1)
             if(musicElement){
                 musicElement.chord = e.Chord?.basicChord + e.Chord?.additional
-                this.triggerDuoLineChange()
+                //https://stackoverflow.com/questions/23892547/what-is-the-best-way-to-trigger-onchange-event-in-react-js
+                //@ts-ignore
+                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+                if(nativeInputValueSetter){
+                    nativeInputValueSetter.call(this.targetBubble, musicElement.chord);
+    
+                    var ev2 = new Event('change', { bubbles: true});
+                    this.targetBubble.dispatchEvent(ev2);
+                    this.triggerDuoLineChange()
+                }
             }
         }
     }

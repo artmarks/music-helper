@@ -45,8 +45,9 @@ export function ShowOptionView(props: any){
         setStyle( style => style = {
             overlay: {}, 
             content: {
-                height: '75vw',
-                width: '90vw'
+                height: '40vw',
+                width: '90vw',
+                borderRadius: '0.5rem'
             }
         })
         // setMusic(music => music = {
@@ -107,7 +108,7 @@ function getStyle(value: number): Object{
     return {
         overlay: {},
         content: {
-            height: value === chordChangeOptionEnum.Chord ? '30vw' : '75vw',
+            height: value === chordChangeOptionEnum.Chord ? '30vw' : '40vw',
             width: value === chordChangeOptionEnum.Chord ? '45vw' : '90vw'
         }
     }

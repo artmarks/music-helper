@@ -123,6 +123,7 @@ function lineNameOnchange(event: ChangeEvent, index: number, duoLineArray: Array
 }
 
 function chordValueChange(event: ChangeEvent<HTMLInputElement>, beat: number, index: number, duoLineArray: Array<duoLine>, callback: Function){
+    console.log('e',event)
     let width = START_CHORD_LENGTH + event.target.value.length * CHAR_CHORD_LENGTH
     if(width > MAX_CHORD_LENGTH){
       width = MAX_CHORD_LENGTH
