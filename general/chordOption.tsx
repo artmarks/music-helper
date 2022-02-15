@@ -1,20 +1,44 @@
-import { timeStamp } from 'console';
 import { useEffect, useState } from 'react';
 import {MdCheck} from 'react-icons/md'
 import Modal from 'react-modal';
-import { Style } from 'util';
 import { fillOption } from './general';
-import { chordArray } from './generalData';
-
+import { chordArray, chordChangeOptionEnum, ChordSymbol, musicElement } from './generalData';
 
 export function ShowOptionView(props: any){
     
     const [option,setOption] = useState(0)
+    const [music,setMusic] = useState(
+        {
+            ChordType: chordChangeOptionEnum.Empty,
+            Chord: {
+                basicChord: ChordSymbol.C,
+                additional: ''
+            },
+        } as musicElement
+    )
     const [style,setStyle] = useState(
         {}
     )
     
-    
+    const setMusicChord = (input: any) => {
+        setMusic((music) => ({
+            ...music,
+            Chord:{
+                basicChord: input,
+                additional: music.Chord!.additional
+            }
+        }) )
+    }
+    const setMusicChordAdd = (input: any) => {
+        setMusic((music) => ({
+            ...music,
+            Chord: {
+                basicChord: music.Chord!.basicChord,
+                additional: input
+            } 
+        }) )
+    }
+
     
     useEffect(() => {
         setOption( option => (option = 0))
@@ -25,40 +49,52 @@ export function ShowOptionView(props: any){
                 width: '90vw'
             }
         })
+        // setMusic(music => music = {
+        //     ChordType: chordChangeOptionEnum.Empty,
+        //     Chord: {
+        //         basicChord: ChordSymbol.C,
+        //         additional: ''
+        //     },
+        // })
     }, [])
 
-    // const f = {
-    //     setStyle( style => style =  {
-    //         overlay: {}, content: {
-    //             height: '75vw',
-    //             width: '90vw'
-    //         }
-    //     })
-    // }
-    
 
     return (
         <div className=''>
             <div className=''>
                 <Modal isOpen={props.isOpen} contentLabel={props.label} style={style} onRequestClose={()=>{props.callbackClose()}} ariaHideApp={false}>
-                <div>
+                <div className='my-2'>
                     <label>View option</label>
                     <select onChange={(e) => {const value = Number(e.target.value); setOption(option => option = value); setStyle(style => style = getStyle(value) )}}>
-                        <option value="0" >Empty</option>
-                        <option value="1" >Chord</option>
-                        <option value="2" >Tab</option>
+                        <option value={chordChangeOptionEnum.Empty} >Empty</option>
+                        <option value={chordChangeOptionEnum.Chord} >Chord</option>
+                        <option value={chordChangeOptionEnum.Tab} >Tab</option>
                         {/* <option value="3" >Notes</option> */}
                     </select>
                 </div>
 
-                {
-                    option === 1 ? <ChordOptionView/> 
-                    : option === 2 ? ( <TabOption/> )
-                    : <EmptyOption/>
-                }
+                <div className='my-2'>
+
+                    {
+                        option === chordChangeOptionEnum.Chord ? <ChordOptionView callbackChord={(e: any) => {
+                            setMusicChord(e);
+                        }}
+                        callbackAdd={(e: any) => {
+                            setMusicChordAdd(e);
+                        }}
+                        /> 
+                        : option === chordChangeOptionEnum.Tab ? ( <TabOption/> )
+                        : <EmptyOption/>
+                    }
+                </div>
                 
-                <div>
-                    <button onClick={(e) => {props.callbackClose()} } className='border-2 p-2 text-green-500' ><MdCheck/></button>
+                <div className='my-2'>
+                    <button onClick={(e) => {
+                        setMusic(music => music);
+                        props.setChordForBubble(music)
+                        props.callbackClose()
+                    }}
+                        className='border-2 p-2 text-green-500' ><MdCheck/></button>
                 </div>
                 </Modal>
             </div>
@@ -71,8 +107,8 @@ function getStyle(value: number): Object{
     return {
         overlay: {},
         content: {
-            height: value === 1 ? '25vw' : '75vw',
-            width: value === 1 ? '45vw' : '90vw'
+            height: value === chordChangeOptionEnum.Chord ? '30vw' : '75vw',
+            width: value === chordChangeOptionEnum.Chord ? '45vw' : '90vw'
         }
     }
 }
@@ -93,20 +129,25 @@ export function TabOption(){
     )
 }
 
-export function ChordOptionView(){
+export function setChord(){
+
+}
+
+export function ChordOptionView(params: any){
 
     return (
         <div>
-            <div>
+            <div className='my-2'>
                 <label className='mr-2'>Chord Base</label>
-                <select className='border-2 rounded-md'>
+                <select onChange={(e) => { params.callbackChord(e.target.value)} } className='border-2 rounded-md'>
                     {chordArray.map((value, index)=> {
                         return fillOption(value, index)
                     })}
                 </select>
             </div>
-            <div>
-                <input className='px-2' placeholder="any adding"/>
+            <div className='my-2'>
+                <label className='mr-2' >Additional</label>
+                <input onChange={(e) => {params.callbackAdd(e.target.value)}} className='px-2' placeholder="any adding"/>
             </div>
         </div>
     )

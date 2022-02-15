@@ -70,13 +70,13 @@ export const chordArray: Array<string> = [
 ]
 
 export enum ChordSymbol {
-    C, C_SHARP,
-    D, D_SHARP,
-    E,
-    F, F_SHARP,
-    G, G_SHARP,
-    A, A_SHARP,
-    B
+    C = 'C', C_SHARP = 'C#',
+    D = 'D', D_SHARP = 'D#',
+    E = 'E',
+    F = 'F', F_SHARP = 'F#',
+    G = 'G', G_SHARP = 'G#',
+    A = 'A', A_SHARP = 'A#',
+    B = 'B'
 }
 
 export type duoLine = {
@@ -92,3 +92,25 @@ export type musicSheet = {
     songKey: ChordSymbol
     descprition: string
 }
+
+export const enum chordChangeOptionEnum {
+    Empty = 0,
+    Chord = 1,
+    Tab = 2
+}
+
+export type Chord = {
+    basicChord: ChordSymbol
+    additional?: string
+}
+
+export type Tab = {
+    guitarLine: Array<string>,
+    tabElement: Array<string>
+} 
+
+export type musicElement = {
+    ChordType: chordChangeOptionEnum,
+    Chord?: Chord,
+    Tab?: Tab
+} 

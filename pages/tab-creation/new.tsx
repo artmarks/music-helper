@@ -1,6 +1,6 @@
 import {compareTimeSignature, Footer, Header, Headline, SongBar, SongHead, StandardButton} from '../../general/general'
 import {MouseEvent} from 'react';
-import { FOUR_QUARTER_BAR, ChordType, duoLine, noteElement, TimeSignatureEnum, TIME_SIGNATURE, TIME_MAP, musicSheet, ChordSymbol, TWO_QUARTER_BAR, THREE_QUARTER_BAR, TIME_ARRAY_MAP} from '../../general/generalData';
+import { ChordType, duoLine, noteElement, TimeSignatureEnum, TIME_SIGNATURE, musicSheet, ChordSymbol, TIME_ARRAY_MAP, musicElement} from '../../general/generalData';
 import React from 'react';
 import { ShowOptionView } from '../../general/chordOption';
 
@@ -15,7 +15,8 @@ interface IState {
 class DuoLineView extends React.Component < IProps, IState > {
 
     modalOpen: boolean = false
-
+    indexBubble: number = 0
+    indexLine: number = 0
 
     constructor(props : IProps) {
         super(props)
@@ -101,11 +102,9 @@ class DuoLineView extends React.Component < IProps, IState > {
     changeTimeSignature(e: React.FormEvent<HTMLSelectElement>){
         
         if(TIME_SIGNATURE.includes(e.currentTarget.value) ){
-            //TODO trigger change Event
 
             const newSignature = e.currentTarget.value as TimeSignatureEnum
             const compare = compareTimeSignature(this.musicSheet.timeSignature, newSignature)
-            const old = this.musicSheet.timeSignature
             if(compare > 0){
                 
                 this.musicSheet.duoLines.forEach((duoLine) => {
@@ -126,9 +125,7 @@ class DuoLineView extends React.Component < IProps, IState > {
                 })
                 
             }else if(compare < 0){
-                const absoluteCompare = compare * (-1)
                 this.musicSheet.duoLines.forEach((duoLine) => {
-                    const old = duoLine.musicElements.length - 1
                     duoLine.musicElements.splice(compare )
                 })
             }
@@ -147,11 +144,31 @@ class DuoLineView extends React.Component < IProps, IState > {
         }
     }
 
-    callbackModal(){
-        console.log(this.modalOpen);
+    callbackModal(e?: MouseEvent < Element, globalThis.MouseEvent >, indexBubble?: number, indexLine?: number){
         this.modalOpen = !this.modalOpen
         this.setState({modalOpen: this.modalOpen});
 
+        if(e){
+            const target = e.target as HTMLInputElement
+            console.log('target', target)
+        }
+        
+        this.indexBubble = indexBubble ? indexBubble: 0;   
+        this.indexLine = indexLine ? indexLine: 0
+    }
+
+    setChordForBubble(e: musicElement){
+        if(e.Chord){
+            const indexSearch = this.musicSheet.duoLines.at(this.indexLine)
+            if(!indexSearch){
+                return
+            }
+            const musicElement = indexSearch.musicElements.at(this.indexBubble - 1)
+            if(musicElement){
+                musicElement.chord = e.Chord?.basicChord + e.Chord?.additional
+                this.triggerDuoLineChange()
+            }
+        }
     }
 
     render() {
@@ -159,15 +176,17 @@ class DuoLineView extends React.Component < IProps, IState > {
             <div className="bg-gradient-to-r from-gray-200 to-gray-400  flex flex-col justify-center min-h-screen py-2 px-4">
                 <Header/>
 
-                <ShowOptionView isOpen={this.modalOpen} label={'testi'} callbackClose={()=> this.callbackModal()} />
+                <ShowOptionView isOpen={this.modalOpen} label={'testi'} callbackClose={(e: any)=> this.callbackModal(e)}
+                    setChordForBubble={(e: musicElement)=>this.setChordForBubble(e)}
+                />
 
                 {/* w-10/12 lg:w-[1280px] */}
                 <main className=" flex flex-col flex-1 text-center">
                     <Headline text="Create a new tab"/>
-                    <SongHead keyCallback={console.log} timeCallback={(e: any) => this.changeTimeSignature(e)}  />
+                    <SongHead timeCallback={(e: any) => this.changeTimeSignature(e)}  />
 
                     <SongBar duoLineArray={ this.musicSheet.duoLines} bar={TIME_ARRAY_MAP.get(this.getTimeSignature())}
-                        callback={ () => this.triggerDuoLineChange() } callbackModal={() => this.callbackModal()}
+                        callback={ () => this.triggerDuoLineChange() } callbackModal={(e:any, indexBubble: number, indexLine: number) => this.callbackModal(e,indexBubble, indexLine)}
                     />
 
                     <div className='flex justify-center mt-6'>
